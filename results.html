@@ -16,14 +16,13 @@
     <!-- Custom styles for this template -->
     <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
 
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$']]}
+      });
+    </script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
   </head>
 
   <body>
@@ -40,18 +39,20 @@
 
       <div class="container">
         <h2>Parallelizing an ILP Assignment Problem</h2>
+        <h3 class="text-muted">Results</h3>
       </div>
 
       <div class="row marketing">
         <div class="col-md-6">
           <h4>Setup</h4>
 
-          <p>We modeled the underlying ILP with <code>pulp</code>, with the open source <code><a href="http://www.gnu.org/software/glpk/">GNU GLPK</a></code> as the back-end solver. We used <code><a href="http://mpi4py.scipy.org/">mpi4py</a></code> to parallelize the problem.</p>
+          <p>We modeled the underlying ILP with <code><a href="https://code.google.com/p/pulp-or/">pulp</a></code> using the <code><a href="http://www.gnu.org/software/glpk/">GNU GLPK</a></code> as the back-end solver. We used <code><a href="http://mpi4py.scipy.org/">mpi4py</a></code> to parallelize the problem.</p>
 
           <h4>Methods</h4>
 
-          <p>
-          </p>
+          <p>Let $m$ denote the number of students and $n$ denote the number of classes. Let $x_{ij}$ be a 0/1 variable with $x_{ij} = 1$ indicating that student $i$ is assigned to class $j$, for $i = 1, ..., m$, $j = 1, ..., n$.</p>
+
+          <h4>Table of results</h4>
 
           <table class="table table-striped table-condensed">
             <thead>
