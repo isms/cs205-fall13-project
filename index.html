@@ -45,7 +45,8 @@
 
       <div class="row marketing">
         <div class="col-md-6">
-          <h4>About</h4>
+
+          <h4>Background</h4>
 
           <p>We model an assignment problem in a small private school wherein each grade of 80 to 100 students must be divided into four classes. In assigning students to classes, the school aims to satisfy several constraints such as not placing certain pairs of students in the same class, or keeping male/female ratios balanced. In <a href="https://www.informs.org/Pubs/ITE/Archive/Volume-14/Optimizing-the-Assignment-of-Students-to-Classes-in-an-Elementary-School">previous work</a>, a model was developed to assist with creating class placements. Following the constraints and objectives given by administrators at the school, the problem is implemented as:
 
@@ -55,14 +56,16 @@
           </ol>
 
           The overarching limitation of the model is that <b>creating feasible solutions is a lengthy process</b>. We wish to improve on this by parallelization.</p>
+        </div>
+
+        <div class="col-md-6">
 
           <h4>Problem statement</h4>
 
           <p><b>Can we take this serial implementation and parallelize the problem so that it can be split among many processors?</b></p>
-        </div>
 
-        <div class="col-md-6">
           <h4>Results</h4>
+
           <p>We achieved massive speedups (over 100x) by parallelizing this problem using <a href="http://en.wikipedia.org/wiki/Message_Passing_Interface">MPI</a>. We were able to move from a serial run time of almost <b>4 hours</b> down to about <b>2 minutes</b> using a cluster of 256 processors and work splitting. MPI proved a powerful and flexible way to parallelize LP solving without significantly modifying the serial model. You can find out more about the project results <a href="results.html">here</a>.</p>
         </div>
       </div>
