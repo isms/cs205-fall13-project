@@ -32,7 +32,7 @@
         <ul class="nav nav-pills pull-right">
           <li><a href="index.html">Home</a></li>
           <li class="active"><a href="results.html">Results</a></li>
-          <li><a href="https://github.com/isms/cs205-fall13-project" target="_blank">Code</a></li>
+          <li><a href="https://github.com/isms/cs205-fall13-project" target="_blank"><img src="img/GitHub-Mark-32px.png" height="18"/> Code</a></li>
         </ul>
         <h3 class="text-muted">CS 205 Project</h3>
       </div>
@@ -43,7 +43,7 @@
       </div>
 
       <div class="row marketing">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <h4>Setup</h4>
 
           <p>We modeled the underlying ILP with <code><a href="https://code.google.com/p/pulp-or/">pulp</a></code> using the <code><a href="http://www.gnu.org/software/glpk/">GNU GLPK</a></code> as the back-end solver. We used <code><a href="http://mpi4py.scipy.org/">mpi4py</a></code> to parallelize the problem.</p>
@@ -54,7 +54,7 @@
 
           <h5>Objective Function</h5>
 
-          <p>Our true goal in the ILP is not to find the \emph{best} solution --- we evaluate solution fitness in the non-linear step --- it is actually to generate as many feasible solutions as possible subject to our hard constraints. We create an arbitrary objective function based on student identification numbers:</p>
+          <p>Our true goal in the ILP is not to find the <b>best</b> solution --- we evaluate solution fitness in the non-linear step --- it is actually to generate as many feasible solutions as possible subject to our hard constraints. We create an arbitrary objective function based on student identification numbers:</p>
 
               <p style="text-align:center">
                  $\operatorname{min} Z = \sum_{j=1}^{n} \sum_{i=1}^{m} x_{ij} \cdot i \cdot j \quad \text{for } i \in \{1, ..., m\} \text{; } j \in \{1, ..., n\}$
@@ -96,19 +96,42 @@
 
         <p>In the first implementation, <b>each process gets an even chunk</b> of the integers in between the absolute min and max of the artificial objective function.</p>
 
-        <img src="img/mpi-master-slave.png" />
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <img src="img/mpi-master-slave.png" width="600" />
+          </div>
+          <div class="panel-footer">Using even work assignments for all processes.</div>
+        </div>
 
         <p>This method generated impressive speedups -- the following graph shows both speedup and efficiency with different numbers of processors.</p>
 
-        <img src="img/result-no-split.png" />
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <img src="img/result-no-split.png" width="600" />
+          </div>
+          <div class="panel-footer">Results from solving ILP with MPI master/slave.</div>
+        </div>
 
         <h4>Splitting up the work</h4>
 
         <p>To be even more efficient, we don't want any of our slave processes to finish early, which they often do because feasible solutions are not evenly distributed through the space of integers being divided up. In our next iteration, we implemented a scheme where the master would attempt to <b>redistribute work from the slowest process to any process that had finished</b> all of its initial work assignment.</p>
 
-        <img src="img/mpi-splitting-work.png" />
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <img src="img/mpi-splitting-work.png" width="600" />
+          </div>
+          <div class="panel-footer">Splitting work to keep all processes employed.</div>
+        </div>
 
-        <img src="img/result-split.png" />
+        Using work splitting led to nice speedups, especially with more processors.
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <img src="img/result-split.png" width="600" />
+          </div>
+          <div class="panel-footer">Results from solving ILP with MPI master/slave with work splitting.</div>
+        </div>
+
 
         <h4>Table of results</h4>
 
