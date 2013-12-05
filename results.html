@@ -48,18 +48,76 @@
 
           <p>We modeled the underlying ILP with <code><a href="https://code.google.com/p/pulp-or/">pulp</a></code> using the <code><a href="http://www.gnu.org/software/glpk/">GNU GLPK</a></code> as the back-end solver. We used <code><a href="http://mpi4py.scipy.org/">mpi4py</a></code> to parallelize the problem.</p>
 
-          <h4>Methods</h4>
+          <h5>Notation</h5>
 
           <p>Let $m$ denote the number of students and $n$ denote the number of classes. Let $x_{ij}$ be a 0/1 variable with $x_{ij} = 1$ indicating that student $i$ is assigned to class $j$, for $i = 1, ..., m$, $j = 1, ..., n$.</p>
 
-          <h4>Table of results</h4>
+          <h5>Objective Function</h5>
+
+          <p>Our true goal in the ILP is not to find the \emph{best} solution --- we evaluate solution fitness in the non-linear step --- it is actually to generate as many feasible solutions as possible subject to our hard constraints. We create an arbitrary objective function based on student identification numbers:</p>
+
+              <p style="text-align:center">
+                 $\operatorname{min} Z = \sum_{j=1}^{n} \sum_{i=1}^{m} x_{ij} \cdot i \cdot j \quad \text{for } i \in \{1, ..., m\} \text{; } j \in \{1, ..., n\}$
+              <p>
+
+          <p>This objective function can be slightly perturbed at each iteration to get the solver to generate a different feaible solution.</p>
+
+          <h5>Constraints</h5>
+
+          <ol>
+            <li> All decision variables must be binary.
+
+                <p style="text-align:center">
+                   $x_{ij} \in \{0, 1\} \quad \forall \; i \in \{1, ..., m\} \text{; } j \in \{1, ..., n\}$
+                </p></li>
+
+            <li>Every student must be assigned to a class.</p>
+
+                <p style="text-align:center">
+                   $\sum_{j=1}^{n} x_{ij} = 1 \quad \text{for } i \in \{1, ..., m\}$
+                </p></li>
+
+            <li>A maximum class size $k$ must be respected.</p>
+
+                <p style="text-align:center">
+                   $\sum_{i=1}^{m} x_{ij} \leq k \quad \text{for } j \in \{1, ..., n\}$
+                </p></li>
+
+            <li>Every student must be in a class with one of his or her designated friends (in a friend list $L_i$ of friends for student $i$).</p>
+
+                <p style="text-align:center">
+                   $x_{ij} \leq \sum_{s \in L_i} x_{sj} \quad \text{for } i \in \{1, ..., m\} \text{; } j \in \{1, ..., n\}$
+                </p></li>
+
+            <li>Certain other constraints involving the male/female ratio in a class, or students who should be kept apart.</li>
+        </ol>
+
+        <h4>Master/Slave model in MPI</h4>
+
+        <p>In the first implementation, <b>each process gets an even chunk</b> of the integers in between the absolute min and max of the artificial objective function.</p>
+
+        <img src="img/mpi-master-slave.png" />
+
+        <p>This method generated impressive speedups -- the following graph shows both speedup and efficiency with different numbers of processors.</p>
+
+        <img src="img/result-no-split.png" />
+
+        <h4>Splitting up the work</h4>
+
+        <p>To be even more efficient, we don't want any of our slave processes to finish early, which they often do because feasible solutions are not evenly distributed through the space of integers being divided up. In our next iteration, we implemented a scheme where the master would attempt to <b>redistribute work from the slowest process to any process that had finished</b> all of its initial work assignment.</p>
+
+        <img src="img/mpi-splitting-work.png" />
+
+        <img src="img/result-split.png" />
+
+        <h4>Table of results</h4>
 
           <table class="table table-striped table-condensed">
             <thead>
               <tr>
                 <th>processors</th>
-                <th>split</th>
-                <th>time</th>
+                <th>split work?</th>
+                <th>time (s)</th>
                 <th>speedup</th>
                 <th>efficiency</th>
               </tr>
