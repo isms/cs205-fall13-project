@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png"> -->
+
+    <title>CS 205 Final Project</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="//netdna.bootstrapcdn.com/bootswatch/3.0.2/journal/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="header">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="index.html">Home</a></li>
+          <li><a href="results.html">Results</a></li>
+          <li><a href="https://github.com/isms/cs205-fall13-project" target="_blank">Code</a></li>
+        </ul>
+        <h3 class="text-muted">CS 205 Project</h3>
+      </div>
+
+      <div class="jumbotron">
+        <h2>Parallelizing an ILP Assignment Problem</h2>
+          <iframe src="//player.vimeo.com/video/1831024?color=ffffff" width="520" height="293" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+      </div>
+
+      <div class="row marketing">
+        <div class="col-md-6">
+          <h4>About</h4>
+
+          <p>We model an assignment problem in a small private school wherein each grade of 80 to 100 students must be divided into four classes. In assigning students to classes, the school aims to satisfy several constraints such as not placing certain pairs of students in the same class or keeping boy/girl ratios balanced. In previous work, a model was developed to assist with creating class placements. Following the constraints and objectives given by administrators at the school, the problem is implemented as:
+
+          <ol>
+            <li>An <a href="http://en.wikipedia.org/wiki/Integer_programming">Integer Linear Program</a> (ILP) for satisfying placement constraints.</li>
+            <li>Non-linear heuristics to further improve on the outputs of the ILP model.</li>
+          </ol>
+
+          The overarching limitation of the model is that <b>creating feasible solutions is a lengthy process<b>. We wish to improve on this by parallelization.</p>
+
+          <h4>Problem statement</h4>
+
+          <p><b>Can we take this serial implementation and parallelize the problem so that it can be split among many processors?</b></p>
+        </div>
+
+        <div class="col-md-6">
+          <h4>Results</h4>
+          <p>WWe achieved massive speedups (over 100x) by parallelizing this problem using <a href="http://en.wikipedia.org/wiki/Message_Passing_Interface">MPI</a>, going from the order of almost <b>4 hours</b> down to about <b>2 minutes</b> using 256 processors and work splitting. MPI proved a powerful and flexible way to parallelize LP solving without significantly modifying the serial model. You can find out more about the our results <a href="results.html">here</a>.</p>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>D. Newman, I. Slavitt, 2013</p>
+      </div>
+
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+  </body>
+</html>
