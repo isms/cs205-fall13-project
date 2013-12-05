@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png"> -->
+
+    <title>CS 205 Final Project</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="//netdna.bootstrapcdn.com/bootswatch/3.0.2/journal/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="header">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="index.html">Home</a></li>
+          <li class="active"><a href="results.html">Results</a></li>
+          <li><a href="https://github.com/isms/cs205-fall13-project" target="_blank">Code</a></li>
+        </ul>
+        <h3 class="text-muted">CS 205 Project</h3>
+      </div>
+
+      <div class="container">
+        <h2>Parallelizing an ILP Assignment Problem</h2>
+      </div>
+
+      <div class="row marketing">
+        <div class="col-md-6">
+          <h4>Setup</h4>
+
+          <p>We modeled the underlying ILP with <code>pulp</code>, with the open source <code><a href="http://www.gnu.org/software/glpk/">GNU GLPK</a></code> as the back-end solver. We used <code><a href="http://mpi4py.scipy.org/">mpi4py</a></code> to parallelize the problem.</p>
+
+          <h4>Methods</h4>
+
+          <p>
+          </p>
+
+          <table class="table table-striped table-condensed">
+            <thead>
+              <tr>
+                <th>processors</th>
+                <th>split</th>
+                <th>time</th>
+                <th>speedup</th>
+                <th>efficiency</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>   4</td>
+                <td>  No</td>
+                <td> 4922.5975</td>
+                <td>   2.742517</td>
+                <td> 0.685629</td>
+              </tr>
+              <tr>
+                <td>   8</td>
+                <td>  No</td>
+                <td> 2212.6460</td>
+                <td>   6.101432</td>
+                <td> 0.762679</td>
+              </tr>
+              <tr>
+                <td>  16</td>
+                <td>  No</td>
+                <td> 1148.0969</td>
+                <td>  11.758859</td>
+                <td> 0.734929</td>
+              </tr>
+              <tr>
+                <td>  32</td>
+                <td>  No</td>
+                <td>  581.3491</td>
+                <td>  23.222380</td>
+                <td> 0.725699</td>
+              </tr>
+              <tr>
+                <td>  64</td>
+                <td>  No</td>
+                <td>  325.5046</td>
+                <td>  41.475019</td>
+                <td> 0.648047</td>
+              </tr>
+              <tr>
+                <td> 128</td>
+                <td>  No</td>
+                <td>  186.2928</td>
+                <td>  72.468230</td>
+                <td> 0.566158</td>
+              </tr>
+              <tr>
+                <td> 256</td>
+                <td>  No</td>
+                <td>  161.1719</td>
+                <td>  83.763420</td>
+                <td> 0.327201</td>
+              </tr>
+              <tr>
+                <td>   4</td>
+                <td> Yes</td>
+                <td> 4538.3395</td>
+                <td>   2.974724</td>
+                <td> 0.743681</td>
+              </tr>
+              <tr>
+                <td>   8</td>
+                <td> Yes</td>
+                <td> 1965.5124</td>
+                <td>   6.868595</td>
+                <td> 0.858574</td>
+              </tr>
+              <tr>
+                <td>  16</td>
+                <td> Yes</td>
+                <td>  961.8448</td>
+                <td>  14.035850</td>
+                <td> 0.877241</td>
+              </tr>
+              <tr>
+                <td>  32</td>
+                <td> Yes</td>
+                <td>  481.9911</td>
+                <td>  28.009458</td>
+                <td> 0.875296</td>
+              </tr>
+              <tr>
+                <td>  64</td>
+                <td> Yes</td>
+                <td>  300.3186</td>
+                <td>  44.953291</td>
+                <td> 0.702395</td>
+              </tr>
+              <tr>
+                <td> 128</td>
+                <td> Yes</td>
+                <td>  179.7172</td>
+                <td>  75.119741</td>
+                <td> 0.586873</td>
+              </tr>
+              <tr>
+                <td> 256</td>
+                <td> Yes</td>
+                <td>  130.6939</td>
+                <td> 103.297166</td>
+                <td> 0.403505</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>D. Newman, I. Slavitt, 2013</p>
+      </div>
+
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+  </body>
+</html>
