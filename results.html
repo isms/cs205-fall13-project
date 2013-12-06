@@ -60,9 +60,9 @@
                  $\operatorname{min} Z = \sum_{j=1}^{n} \sum_{i=1}^{m} x_{ij} \cdot i \cdot j \quad \text{for } i \in \{1, ..., m\} \text{; } j \in \{1, ..., n\}$
               <p>
 
-          <p>This objective function can be used to get the solver to generate a different feaible solution. Specifically, we can take the objective function minimum found in the last iteration &mdash; call it $z_{t-1)$ &mdash; and add a new constraint for the current iteration that the objective function $Z \geq z_{t-1)$.</p>
+          <p>This objective function can be used to get the solver to generate a different feaible solution. Specifically, we can take the objective function minimum found in the last iteration &mdash; call it $z_{t-1}$ &mdash; and add a new constraint for the current iteration that the objective function $Z > z_{t-1}$.</p>
 
-          <p><strong>Note:</strong> some solvers are able to generate additional feasible solutions from the same LP model, but many are not. Though we opted to use <code>GLPK</code> for benchmarking purposes, we wanted to avoid making assumptions about the solver. For that reason, we chose this method of an artificial objective function with iterative constraints in order to generate multiple feasible solutions.</p>
+          <p><small><strong>Note:</strong> some solvers are able to generate additional feasible solutions from the same LP model, but many are not. Though we opted to use <code>GLPK</code> for benchmarking purposes, we wanted to avoid making assumptions about the solver. For that reason, we chose this method of an artificial objective function with iterative constraints in order to generate multiple feasible solutions.</small></p>
 
           <h5>Constraints</h5>
 
