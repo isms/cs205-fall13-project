@@ -46,7 +46,7 @@
         <div class="col-md-12">
           <h4>Setup</h4>
 
-          <p>We modeled the underlying ILP with <code><a href="https://code.google.com/p/pulp-or/">pulp</a></code> using the <code><a href="http://www.gnu.org/software/glpk/">GNU GLPK</a></code> as the back-end solver. We used <code><a href="http://mpi4py.scipy.org/">mpi4py</a></code> to parallelize the problem.</p>
+          <p>We modeled the underlying ILP with <code><a href="https://code.google.com/p/pulp-or/">pulp</a></code> using the <code><a href="http://www.gnu.org/software/glpk/">GNU GLPK</a></code> as the back-end solver. We used <code><a href="http://mpi4py.scipy.org/">mpi4py</a></code> to parallelize the implementation.</p>
 
           <h5>Notation</h5>
 
@@ -54,13 +54,15 @@
 
           <h5>Objective Function</h5>
 
-          <p>Our true goal in the ILP is not to find the <b>best</b> solution --- we evaluate solution fitness in the non-linear step --- it is actually to generate as many feasible solutions as possible subject to our hard constraints. We create an arbitrary objective function based on student identification numbers:</p>
+          <p>Our true goal in the ILP is not to find the <i>best</i> solution &mdash; we evaluate solution fitness in the non-linear step &mdash; it is actually to generate as many feasible solutions as possible subject to our hard constraints. We create an arbitrary objective function based on student identification numbers:</p>
 
               <p style="text-align:center">
                  $\operatorname{min} Z = \sum_{j=1}^{n} \sum_{i=1}^{m} x_{ij} \cdot i \cdot j \quad \text{for } i \in \{1, ..., m\} \text{; } j \in \{1, ..., n\}$
               <p>
 
-          <p>This objective function can be slightly perturbed at each iteration to get the solver to generate a different feaible solution.</p>
+          <p>This objective function can be used to get the solver to generate a different feaible solution. Specifically, we can take the objective function minimum found in the last iteration &mdash; call it $z_{t-1)$ &mdash; and add a new constraint for the current iteration that the objective function $Z \geq z_{t-1)$.</p>
+
+          <div class="alert alert-info"><strong>Note:</strong> some solvers are able to generate additional feasible solutions from the same LP model, but many are not. Though we opted to use <code>GLPK</code> for benchmarking purposes, we wanted to avoid making assumptions about the solver. For that reason, we chose this method of an artificial objective function with iterative constraints in order to generate multiple feasible solutions.</div>
 
           <h5>Constraints</h5>
 
@@ -123,7 +125,7 @@
           <div class="panel-footer">Splitting work to keep all processes employed.</div>
         </div>
 
-        Using work splitting led to nice speedups, especially with more processors.
+        Work splitting was even faster (and slightly more efficient) than the previous implementation.
 
         <div class="panel panel-default">
           <div class="panel-body">
