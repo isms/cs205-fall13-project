@@ -50,7 +50,7 @@
 
           <h5>Notation</h5>
 
-          <p>Let $m$ denote the number of students and $n$ denote the number of classes. Let $x_{ij}$ be a 0/1 variable with $x_{ij} = 1$ indicating that student $i$ is assigned to class $j$, for $i = 1, ..., m$, $j = 1, ..., n$.</p>
+          <p>Let $m$ denote the number of students and $n$ denote the number of classes. Let $x_{ij}$ be a binary variable with $x_{ij} = 1$ indicating that student $i$ is assigned to class $j$, for $i = 1, ..., m$, $j = 1, ..., n$.</p>
 
           <h5>Objective Function</h5>
 
@@ -62,7 +62,7 @@
 
           <p>This objective function can be used to get the solver to generate a different feaible solution. Specifically, we can take the objective function minimum found in the last iteration &mdash; call it $z_{t-1)$ &mdash; and add a new constraint for the current iteration that the objective function $Z \geq z_{t-1)$.</p>
 
-          <div class="alert alert-info"><strong>Note:</strong> some solvers are able to generate additional feasible solutions from the same LP model, but many are not. Though we opted to use <code>GLPK</code> for benchmarking purposes, we wanted to avoid making assumptions about the solver. For that reason, we chose this method of an artificial objective function with iterative constraints in order to generate multiple feasible solutions.</div>
+          <p><strong>Note:</strong> some solvers are able to generate additional feasible solutions from the same LP model, but many are not. Though we opted to use <code>GLPK</code> for benchmarking purposes, we wanted to avoid making assumptions about the solver. For that reason, we chose this method of an artificial objective function with iterative constraints in order to generate multiple feasible solutions.</p>
 
           <h5>Constraints</h5>
 
