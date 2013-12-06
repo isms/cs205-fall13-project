@@ -55,7 +55,7 @@
             <li>Non-linear heuristics to further improve on the outputs of the ILP model by evaluating a fitness score for each feasible solution. This fitness score takes into account multiple simultaneous objectives that would be too restrictive if implemented as hard constraints in the ILP.</li>
           </ol>
 
-          The overarching limitation of the model is that <em>creating feasible solutions is a lengthy process</em>. We wish to improve on this by parallelization.</p>
+          The overarching limitation of the model is that <strong>creating feasible solutions is a lengthy process</strong>. We wish to improve on this by parallelization.</p>
         </div>
 
         <div class="col-md-6">
@@ -66,7 +66,7 @@
 
           <h4>Results</h4>
 
-          <p>We achieved massive speedups (over 100x) by parallelizing this problem using <a href="http://en.wikipedia.org/wiki/Message_Passing_Interface">MPI</a>. We were able to move from a serial run time of almost <em>4 hours</em> down to about <em>2 minutes</em> using a cluster of 256 processors and load balancing. MPI proved a powerful and flexible way to parallelize LP solving. You can read more about the project results <a href="results.html">here</a>.</p>
+          <p>We achieved massive speedups (over 100x) by parallelizing this problem using <a href="http://en.wikipedia.org/wiki/Message_Passing_Interface">MPI</a>. We were able to move from a serial run time of almost <strong>4 hours</strong> down to about <strong>2 minutes</strong> using a cluster of 256 processors and load balancing. MPI proved a powerful and flexible way to parallelize LP solving. You can read more about the project results <a href="results.html">here</a>.</p>
         </div>
       </div>
 

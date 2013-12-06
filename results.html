@@ -96,7 +96,7 @@
 
         <h4>Master/Slave model in MPI</h4>
 
-        <p>In the first implementation, <em>each process gets an even chunk</em> of the integers in between the absolute min and max of the artificial objective function.</p>
+        <p>In the first implementation, <strong>each process gets an even chunk</strong> of the integers in between the absolute min and max of the artificial objective function.</p>
 
         <div class="panel panel-default">
           <div class="panel-body">
@@ -116,7 +116,7 @@
 
         <h4>Load balancing</h4>
 
-        <p>To be even more efficient, we don't want any of our slave processes to finish early (which they often do because feasible solutions are not evenly distributed through the space of integers being divided up). In our next iteration, we implemented a scheme where the master would attempt to <em>redistribute work from the slowest process to any process that had finished</em> all of its initial work assignment.</p>
+        <p>To be even more efficient, we don't want any of our slave processes to finish early (which they often do because feasible solutions are not evenly distributed through the space of integers being divided up). In our next iteration, we implemented a scheme where the master would attempt to <strong>redistribute work from the slowest process to any process that had finished</strong> all of its initial work assignment.</p>
 
         <div class="panel panel-default">
           <div class="panel-body">
