@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <!-- <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png"> -->
+    <link rel="shortcut icon" href="http://pages.github.com/favicon.ico">
 
     <title>CS 205 Final Project</title>
 
@@ -96,7 +96,7 @@
 
         <h4>Master/Slave model in MPI</h4>
 
-        <p>In the first implementation, <b>each process gets an even chunk</b> of the integers in between the absolute min and max of the artificial objective function.</p>
+        <p>In the first implementation, <em>each process gets an even chunk</em> of the integers in between the absolute min and max of the artificial objective function.</p>
 
         <div class="panel panel-default">
           <div class="panel-body">
@@ -105,7 +105,7 @@
           <div class="panel-footer">Using even work assignments for all processes.</div>
         </div>
 
-        <p>This method generated impressive speedups -- the following graph shows both speedup and efficiency with different numbers of processors.</p>
+        <p>This method resulted in excellent speedups &mdash; the following graph shows both speedup and efficiency with different numbers of processors.</p>
 
         <div class="panel panel-default">
           <div class="panel-body">
@@ -116,7 +116,7 @@
 
         <h4>Load balancing</h4>
 
-        <p>To be even more efficient, we don't want any of our slave processes to finish early, which they often do because feasible solutions are not evenly distributed through the space of integers being divided up. In our next iteration, we implemented a scheme where the master would attempt to <b>redistribute work from the slowest process to any process that had finished</b> all of its initial work assignment.</p>
+        <p>To be even more efficient, we don't want any of our slave processes to finish early (which they often do because feasible solutions are not evenly distributed through the space of integers being divided up). In our next iteration, we implemented a scheme where the master would attempt to <em>redistribute work from the slowest process to any process that had finished</em> all of its initial work assignment.</p>
 
         <div class="panel panel-default">
           <div class="panel-body">
@@ -131,7 +131,7 @@
           <div class="panel-body">
             <img src="img/result-split.png" width="600" />
           </div>
-          <div class="panel-footer">Results from solving ILP with MPI master/slave with load balancing.</div>
+          <div class="panel-footer">Results from solving ILP with MPI master/slave and load balancing.</div>
         </div>
 
 
@@ -148,103 +148,110 @@
               </tr>
             </thead>
             <tbody>
+              <tr class="warning">
+                <td>   1</td>
+                <td> ---</td>
+                <td> 13500.3095</td>
+                <td> ---</td>
+                <td> ---</td>
+              </tr>
               <tr>
                 <td>   4</td>
                 <td>  No</td>
                 <td> 4922.5975</td>
-                <td>   2.742517</td>
-                <td> 0.685629</td>
+                <td>   2.74</td>
+                <td> 0.69</td>
               </tr>
               <tr>
                 <td>   8</td>
                 <td>  No</td>
                 <td> 2212.6460</td>
-                <td>   6.101432</td>
-                <td> 0.762679</td>
+                <td>   6.10</td>
+                <td> 0.76</td>
               </tr>
               <tr>
                 <td>  16</td>
                 <td>  No</td>
                 <td> 1148.0969</td>
-                <td>  11.758859</td>
-                <td> 0.734929</td>
+                <td>  11.76</td>
+                <td> 0.73</td>
               </tr>
               <tr>
                 <td>  32</td>
                 <td>  No</td>
                 <td>  581.3491</td>
-                <td>  23.222380</td>
-                <td> 0.725699</td>
+                <td>  23.22</td>
+                <td> 0.73</td>
               </tr>
               <tr>
                 <td>  64</td>
                 <td>  No</td>
                 <td>  325.5046</td>
-                <td>  41.475019</td>
-                <td> 0.648047</td>
+                <td>  41.48</td>
+                <td> 0.69</td>
               </tr>
               <tr>
                 <td> 128</td>
                 <td>  No</td>
                 <td>  186.2928</td>
-                <td>  72.468230</td>
-                <td> 0.566158</td>
+                <td>  72.49</td>
+                <td> 0.57</td>
               </tr>
               <tr>
                 <td> 256</td>
                 <td>  No</td>
                 <td>  161.1719</td>
-                <td>  83.763420</td>
-                <td> 0.327201</td>
+                <td>  83.76</td>
+                <td> 0.33</td>
               </tr>
               <tr>
                 <td>   4</td>
                 <td> Yes</td>
                 <td> 4538.3395</td>
-                <td>   2.974724</td>
-                <td> 0.743681</td>
+                <td>   2.97</td>
+                <td> 0.74</td>
               </tr>
               <tr>
                 <td>   8</td>
                 <td> Yes</td>
                 <td> 1965.5124</td>
-                <td>   6.868595</td>
-                <td> 0.858574</td>
+                <td>   6.87</td>
+                <td> 0.86</td>
               </tr>
               <tr>
                 <td>  16</td>
                 <td> Yes</td>
                 <td>  961.8448</td>
-                <td>  14.035850</td>
-                <td> 0.877241</td>
+                <td>  14.04</td>
+                <td> 0.88</td>
               </tr>
               <tr>
                 <td>  32</td>
                 <td> Yes</td>
                 <td>  481.9911</td>
-                <td>  28.009458</td>
-                <td> 0.875296</td>
+                <td>  28.01</td>
+                <td> 0.88</td>
               </tr>
               <tr>
                 <td>  64</td>
                 <td> Yes</td>
                 <td>  300.3186</td>
-                <td>  44.953291</td>
-                <td> 0.702395</td>
+                <td>  44.95</td>
+                <td> 0.70</td>
               </tr>
               <tr>
                 <td> 128</td>
                 <td> Yes</td>
                 <td>  179.7172</td>
-                <td>  75.119741</td>
-                <td> 0.586873</td>
+                <td>  75.12</td>
+                <td> 0.59</td>
               </tr>
               <tr>
                 <td> 256</td>
                 <td> Yes</td>
                 <td>  130.6939</td>
-                <td> 103.297166</td>
-                <td> 0.403505</td>
+                <td> 103.30</td>
+                <td> 0.40</td>
               </tr>
             </tbody>
           </table>
