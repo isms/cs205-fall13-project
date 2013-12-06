@@ -52,7 +52,7 @@
 
           <p>Let $m$ denote the number of students and $n$ denote the number of classes. Let $x_{ij}$ be a binary variable with $x_{ij} = 1$ indicating that student $i$ is assigned to class $j$, for $i = 1, ..., m$, $j = 1, ..., n$.</p>
 
-          <h5>Objective Function</h5>
+          <h5>Objective function</h5>
 
           <p>Our true goal in the ILP is not to find the <i>best</i> solution &mdash; we evaluate solution fitness in the non-linear step &mdash; it is actually to generate as many feasible solutions as possible subject to our hard constraints. We create an arbitrary objective function based on student identification numbers:</p>
 
@@ -114,7 +114,7 @@
           <div class="panel-footer">Results from solving ILP with MPI master/slave.</div>
         </div>
 
-        <h4>Splitting up the work</h4>
+        <h4>Load balancing</h4>
 
         <p>To be even more efficient, we don't want any of our slave processes to finish early, which they often do because feasible solutions are not evenly distributed through the space of integers being divided up. In our next iteration, we implemented a scheme where the master would attempt to <b>redistribute work from the slowest process to any process that had finished</b> all of its initial work assignment.</p>
 
@@ -122,16 +122,16 @@
           <div class="panel-body">
             <img src="img/mpi-splitting-work.png" width="600" />
           </div>
-          <div class="panel-footer">Splitting work to keep all processes employed.</div>
+          <div class="panel-footer">Load balancing to keep all processes employed.</div>
         </div>
 
-        Work splitting was even faster (and slightly more efficient) than the previous implementation.
+        Load balancing was even faster (and slightly more efficient) than the previous implementation.
 
         <div class="panel panel-default">
           <div class="panel-body">
             <img src="img/result-split.png" width="600" />
           </div>
-          <div class="panel-footer">Results from solving ILP with MPI master/slave with work splitting.</div>
+          <div class="panel-footer">Results from solving ILP with MPI master/slave with load balancing.</div>
         </div>
 
 
@@ -141,7 +141,7 @@
             <thead>
               <tr>
                 <th>processors</th>
-                <th>split work?</th>
+                <th>load balancing</th>
                 <th>time (s)</th>
                 <th>speedup</th>
                 <th>efficiency</th>
