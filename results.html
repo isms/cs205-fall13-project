@@ -107,15 +107,15 @@
 
         <p>With fewer processors, this was a relatively fast and efficient method. However, as the number of processes increases the overhead increases quickly. Part of the reason is that in order to avoid non-blocking communication, a process that runs out of work randomly picks a different process to ask for more. When there are many processes with relatively small search spaces, they all tend to run out fairly quickly and then spend too much time trying to contact one another before wrapping up.</p>
 
-        <h4>Master/Slave model</h4>
+        <h4>Master/slave model</h4>
 
-        <p>In the first iteration of Master/Slave, <strong>each process gets an even chunk</strong> of the integers in between the absolute min and max of the artificial objective function. In this scheme, we do not yet do any load balancing. Although it seems probable that load balancing will have a net positive impact, we first would like to observe performance without doing so &mdash; this way we can quantify the benefits of load balancing, and see if the added overhead is worthwhile.</p>
+        <p>In the first iteration of master/slave, <strong>each process gets an even chunk</strong> of the integers in between the absolute min and max of the artificial objective function. In this scheme, we do not yet do any load balancing. Although it seems probable that load balancing will have a net positive impact, we first would like to observe performance without doing so &mdash; this way we can quantify the benefits of load balancing, and see if the added overhead is worthwhile.</p>
 
         <div class="panel panel-default">
           <div class="panel-body">
             <img src="img/mpi-master-slave.png" width="600" />
           </div>
-          <div class="panel-footer">Master/Slave using even work assignments for all processes.</div>
+          <div class="panel-footer">Master/slave using even work assignments for all processes.</div>
         </div>
 
         <p>Like distributed load balancing, this method resulted in excellent speedups over the serial version &mdash; the following graph shows both speedup and efficiency with different numbers of processors.</p>
@@ -127,7 +127,7 @@
           <div class="panel-footer">Results from solving ILP with MPI master/slave.</div>
         </div>
 
-        <h4>Master/Slave model with load balancing</h4>
+        <h4>Master/slave model with load balancing</h4>
 
         <p>To be even more efficient, we don't want any of our slave processes to finish early (which they often do because feasible solutions are not evenly distributed through the space of integers being divided up). In our next iteration, we implemented a scheme where the master would attempt to <strong>redistribute work from the slowest process to any process that had finished</strong> all of its initial work assignment.</p>
 
@@ -135,7 +135,7 @@
           <div class="panel-body">
             <img src="img/mpi-splitting-work.png" width="600" />
           </div>
-          <div class="panel-footer">Master/Slave with load balancing to keep all processes employed.</div>
+          <div class="panel-footer">Master/slave with load balancing to keep all processes employed.</div>
         </div>
 
         Load balancing was even faster (and slightly more efficient) than the previous implementation.
