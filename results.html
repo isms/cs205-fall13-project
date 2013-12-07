@@ -102,7 +102,7 @@
           <div class="panel-body">
             <img src="img/distributed-load-balancing.png" width="600" />
           </div>
-          <div class="panel-footer">Using even work assignments for all processes.</div>
+          <div class="panel-footer">Distributed load balancing.</div>
         </div>
 
         <p>With fewer processors, this was a relatively fast and efficient method. However, as the number of processes increases the overhead increases quickly. Part of the reason is that in order to avoid non-blocking communication, a process that runs out of work randomly picks a different process to ask for more. When there are many processes with relatively small search spaces, they all tend to run out fairly quickly and then spend too much time trying to contact one another before wrapping up.</p>
@@ -115,7 +115,7 @@
           <div class="panel-body">
             <img src="img/mpi-master-slave.png" width="600" />
           </div>
-          <div class="panel-footer">Using even work assignments for all processes.</div>
+          <div class="panel-footer">Master/Slave using even work assignments for all processes.</div>
         </div>
 
         <p>Like distributed load balancing, this method resulted in excellent speedups over the serial version &mdash; the following graph shows both speedup and efficiency with different numbers of processors.</p>
@@ -135,7 +135,7 @@
           <div class="panel-body">
             <img src="img/mpi-splitting-work.png" width="600" />
           </div>
-          <div class="panel-footer">Load balancing to keep all processes employed.</div>
+          <div class="panel-footer">Master/Slave with load balancing to keep all processes employed.</div>
         </div>
 
         Load balancing was even faster (and slightly more efficient) than the previous implementation.
