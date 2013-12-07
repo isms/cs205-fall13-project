@@ -96,7 +96,7 @@
 
         <h4>Distributed load balancing</h4>
 
-        <p>One way to split up work in MPI is to <strong>start each process gets an even chunk</strong> of the integers in between the absolute min and max of the artificial objective function, but <strong>let them communicate directly with one another if they run out of work</strong>.</p>
+        <p>One way to split up work in MPI is to <strong>start each process off with a roughly equal amount</strong> of integers in between the absolute min and max of the artificial objective function, but <strong>let them communicate directly with one another if they run out of work</strong>.</p>
 
         <div class="panel panel-default">
           <div class="panel-body">
@@ -109,7 +109,7 @@
 
         <h4>Master/Slave model</h4>
 
-        <p>In the first iteration of Master/Slave, <strong>each process gets an even chunk</strong> of the integers in between the absolute min and max of the artificial objective function.</p>
+        <p>In the first iteration of Master/Slave, <strong>each process gets an even chunk</strong> of the integers in between the absolute min and max of the artificial objective function. In this scheme, we do not yet do any load balancing. Although it seems probable that load balancing will have a net positive impact, we first would like to observe performance without doing so &mdash; this way we can quantify the benefits of load balancing, and see if the added overhead is worthwhile.</p>
 
         <div class="panel panel-default">
           <div class="panel-body">
@@ -118,7 +118,7 @@
           <div class="panel-footer">Using even work assignments for all processes.</div>
         </div>
 
-        <p>This method resulted in excellent speedups &mdash; the following graph shows both speedup and efficiency with different numbers of processors.</p>
+        <p>Like distributed load balancing, this method resulted in excellent speedups over the serial version &mdash; the following graph shows both speedup and efficiency with different numbers of processors.</p>
 
         <div class="panel panel-default">
           <div class="panel-body">
