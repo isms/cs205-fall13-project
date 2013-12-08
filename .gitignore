@@ -37,6 +37,8 @@ nosetests.xml
 
 # IDE files
 .idea/
+.ipynb_*
 
 # Output files
 output/
+*.csv

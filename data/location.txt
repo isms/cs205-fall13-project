@@ -1,0 +1,93 @@
+StudentNum	Location
+1	New Rochelle
+2	Manhattan
+3	Riverdale/Bronx/Yonkers
+4	White Plains
+5	Riverdale/Bronx/Yonkers
+6	White Plains
+7	New Rochelle
+8	New Rochelle
+9	New Rochelle
+10	White Plains
+11	New Rochelle
+12	Riverdale/Bronx/Yonkers
+13	Manhattan
+14	Manhattan
+15	Riverdale/Bronx/Yonkers
+16	New Rochelle
+17	Riverdale/Bronx/Yonkers
+18	Manhattan
+19	Riverdale/Bronx/Yonkers
+20	Riverdale/Bronx/Yonkers
+21	Manhattan
+22	Riverdale/Bronx/Yonkers
+23	New Rochelle
+24	Other
+25	Manhattan
+26	New Rochelle
+27	White Plains
+28	Riverdale/Bronx/Yonkers
+29	Riverdale/Bronx/Yonkers
+30	Riverdale/Bronx/Yonkers
+31	Riverdale/Bronx/Yonkers
+32	Riverdale/Bronx/Yonkers
+33	New Rochelle
+34	Riverdale/Bronx/Yonkers
+35	Riverdale/Bronx/Yonkers
+36	Scarsdale
+37	Scarsdale
+38	Scarsdale
+39	Riverdale/Bronx/Yonkers
+40	New Rochelle
+41	New Rochelle
+42	New Rochelle
+43	Riverdale/Bronx/Yonkers
+44	White Plains
+45	Other
+46	New Rochelle
+47	Riverdale/Bronx/Yonkers
+48	Riverdale/Bronx/Yonkers
+49	White Plains
+50	New Rochelle
+51	Scarsdale
+52	New Rochelle
+53	Riverdale/Bronx/Yonkers
+54	Scarsdale
+55	New Rochelle
+56	Riverdale/Bronx/Yonkers
+57	New Rochelle
+58	New Rochelle
+59	New Rochelle
+60	Riverdale/Bronx/Yonkers
+61	Riverdale/Bronx/Yonkers
+62	New Rochelle
+63	Riverdale/Bronx/Yonkers
+64	Riverdale/Bronx/Yonkers
+65	Riverdale/Bronx/Yonkers
+66	Riverdale/Bronx/Yonkers
+67	Manhattan
+68	Riverdale/Bronx/Yonkers
+69	Riverdale/Bronx/Yonkers
+70	Riverdale/Bronx/Yonkers
+71	Riverdale/Bronx/Yonkers
+72	Manhattan
+73	Manhattan
+74	Riverdale/Bronx/Yonkers
+75	Riverdale/Bronx/Yonkers
+76	White Plains
+77	New Rochelle
+78	Manhattan
+79	Manhattan
+80	Manhattan
+81	Riverdale/Bronx/Yonkers
+82	New Rochelle
+83	New Rochelle
+84	Riverdale/Bronx/Yonkers
+85	Riverdale/Bronx/Yonkers
+86	Riverdale/Bronx/Yonkers
+87	Riverdale/Bronx/Yonkers
+88	White Plains
+89	Riverdale/Bronx/Yonkers
+90	Riverdale/Bronx/Yonkers
+91	Riverdale/Bronx/Yonkers
+
