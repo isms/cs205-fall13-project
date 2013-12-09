@@ -94,9 +94,22 @@
             <li>Certain other constraints involving the male/female ratio in a class, or students who should be kept apart.</li>
         </ol>
 
+        <h4>Basic implementation</h4>
+
+        <p>The simplest implementation using MPI is to start each process off with a roughly equal portion of the integers in between the absolute min and max of the artificial objective function, and simply work through that process without communicating further.</p>
+
+        <p>The obvious problem with this method &mdash; we'll call it the "naive" implementation &mdash; is that some processors may finish long before the others and waste time doing nothing. Nonetheless, there is large initial win simply by dividing up the work among many processors. We seek to improve on this initial improvement by being smarter about keeping all processes employed.</p>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <img src="img/result-naive.png" width="600" />
+          </div>
+          <div class="panel-footer">Results from the naive implementation.</div>
+        </div>
+
         <h4>Distributed load balancing</h4>
 
-        <p>One way to split up work in MPI is to <strong>start each process off with a roughly equal amount</strong> of integers in between the absolute min and max of the artificial objective function, but <strong>let them communicate directly with one another if they run out of work</strong>.</p>
+        <p>One way to split up work in MPI is to start each process off with a roughly equal amount of work (as in the naive implementation), but <strong>let them communicate directly with one another if they run out of work</strong>.</p>
 
         <div class="panel panel-default">
           <div class="panel-body">
@@ -106,6 +119,13 @@
         </div>
 
         <p>With fewer processors, this was a relatively fast and efficient method. However, as the number of processes increases the overhead increases quickly. Part of the reason is that in order to avoid non-blocking communication, a process that runs out of work randomly picks a different process to ask for more. When there are many processes with relatively small search spaces, they all tend to run out fairly quickly and then spend too much time trying to contact one another before wrapping up.</p>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <!-- <img src="img/result-distributed.png" width="600" /> -->
+          </div>
+          <div class="panel-footer">Results from the naive implementation.</div>
+        </div>
 
         <h4>Master/slave model</h4>
 
