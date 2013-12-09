@@ -46,7 +46,7 @@
         <div class="col-md-12">
           <h4>Setup</h4>
 
-          <p>We modeled the underlying ILP with <code><a href="https://code.google.com/p/pulp-or/">pulp</a></code> using the <code><a href="http://www.gnu.org/software/glpk/">GNU GLPK</a></code> as the back-end solver. We used <code><a href="http://mpi4py.scipy.org/">mpi4py</a></code> to parallelize the implementation.</p>
+          <p>We modeled the underlying ILP with <code><a href="https://code.google.com/p/pulp-or/">pulp</a></code> using the <code><a href="http://www.gnu.org/software/glpk/">GNU GLPK</a></code> as the back-end solver. We used <code><a href="http://mpi4py.scipy.org/">mpi4py</a></code> to parallelize solution finding.</p>
 
           <h5>Notation</h5>
 
@@ -54,10 +54,10 @@
 
           <h5>Objective function</h5>
 
-          <p>Our true goal in the ILP is not to find the <i>best</i> solution &mdash; we evaluate solution fitness in the non-linear step &mdash; it is actually to generate as many feasible solutions as possible subject to our hard constraints. We create an arbitrary objective function based on student identification numbers:</p>
+          <p>Our true goal in the ILP is not to find the "best" ILP solution &mdash; we actually evaluate solution fitness in the non-linear step &mdash; instead we are simply trying to generate as many feasible solutions as possible subject to our hard constraints. We create an arbitrary objective function:</p>
 
               <p style="text-align:center">
-                 $\operatorname{min} Z = \sum_{j=1}^{n} \sum_{i=1}^{m} x_{ij} \cdot i \cdot j \quad \text{for } i \in \{1, ..., m\} \text{; } j \in \{1, ..., n\}$
+                 $$\operatorname{min} Z = \sum_{j=1}^{n} \sum_{i=1}^{m} x_{ij} \cdot i \cdot j$$
               <p>
 
           <p>This objective function can be used to get the solver to generate a different feaible solution. Specifically, we can take the objective function minimum found in the last iteration &mdash; call it $z_{t-1}$ &mdash; and add a new constraint for the current iteration that the objective function $Z > z_{t-1}$.</p>
@@ -70,258 +70,265 @@
             <li> All decision variables must be binary.
 
                 <p style="text-align:center">
-                   $x_{ij} \in \{0, 1\} \quad \forall \; i \in \{1, ..., m\} \text{; } j \in \{1, ..., n\}$
+                   $$x_{ij} \in \{0, 1\}, \; \forall \; i \in \{1, ..., m\} \text{; } j \in \{1, ..., n\}$$
                 </p></li>
 
             <li>Every student must be assigned to a class.</p>
 
                 <p style="text-align:center">
-                   $\sum_{j=1}^{n} x_{ij} = 1 \quad \text{for } i \in \{1, ..., m\}$
+                   $$\sum_{j=1}^{n} x_{ij} = 1, \; i \in \{1, ..., m\}$$
                 </p></li>
 
             <li>A maximum class size $k$ must be respected.</p>
 
                 <p style="text-align:center">
-                   $\sum_{i=1}^{m} x_{ij} \leq k \quad \text{for } j \in \{1, ..., n\}$
+                   $$\sum_{i=1}^{m} x_{ij} \leq k, \; j \in \{1, ..., n\}$$
                 </p></li>
 
             <li>Every student must be in a class with one of his or her designated friends (in a friend list $L_i$ of friends for student $i$).</p>
 
                 <p style="text-align:center">
-                   $x_{ij} \leq \sum_{s \in L_i} x_{sj} \quad \text{for } i \in \{1, ..., m\} \text{; } j \in \{1, ..., n\}$
+                   $$x_{ij} \leq \sum_{s \in L_i} x_{sj}, \; i \in \{1, ..., m\} \text{; } j \in \{1, ..., n\}$$
                 </p></li>
 
             <li>Certain other constraints involving the male/female ratio in a class, or students who should be kept apart.</li>
+          </ol>
+
+          <h4>Basic implementation</h4>
+
+          <p>The simplest implementation using MPI is to start each process off with a roughly equal portion of the integers in between the absolute min and max of the artificial objective function, and let them simply work through their respective assignments without communicating further until work collection by the root process.</p>
+
+          <p>The obvious problem with this method &mdash; we'll call it the "naive" implementation &mdash; is that some processors may finish long before the others and waste time doing nothing. Nonetheless, there is large initial win simply by dividing up the work among many processors. We seek to improve on this initial improvement by being smarter about keeping all processes employed.</p>
+
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <img src="img/result-naive.png" width="600" />
+            </div>
+            <div class="panel-footer">Results from the naive implementation.</div>
+          </div>
+
+          <h4>Distributed load balancing</h4>
+
+          <p>One way to split up work in MPI is to start each process off with a roughly equal amount of work (as in the naive implementation), but let them communicate directly with one another if they run out of work.</p>
+
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <img src="img/distributed-load-balancing.png" width="600" />
+            </div>
+            <div class="panel-footer">Distributed load balancing.</div>
+          </div>
+
+          <p>With fewer processors, this was a relatively fast and efficient method. However, the overhead increases quickly as the number of processes is increased. Part of the reason is that a process that runs out of work randomly picks a different process to ask for more. When there are many processes with relatively small search spaces, they all tend to run out fairly quickly and then spend too much time trying to contact one another before wrapping up.</p>
+
+          <!--
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <img src="img/result-distributed.png" width="600" />
+            </div>
+            <div class="panel-footer">Results from the distributed load balancing implementation.</div>
+          </div>
+          -->
+
+          <h4>Master/slave model</h4>
+
+          <p>In the first iteration of master/slave, each process initially gets an even chunk of the integers in between the absolute min and max of the artificial objective function. Like the naive implementation, we do not yet do any load balancing. Additionally, we have one fewer process than the naive version because the master does not yet do any work. Although it seems probable that load balancing will have a net positive impact, we first would like to observe performance without doing so &mdash; this way we can quantify the benefits of load balancing, and see if the added overhead is worthwhile.</p>
+
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <img src="img/mpi-master-slave.png" width="600" />
+            </div>
+            <div class="panel-footer">Master/slave using even work assignments for all processes.</div>
+          </div>
+
+          <p>Like the naive implementation, this method resulted in excellent speedups over the serial version &mdash; the following graph shows both speedup and efficiency with different numbers of processors.</p>
+
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <img src="img/result-no-split.png" width="600" />
+            </div>
+            <div class="panel-footer">Results from solving ILP with simple master/slave.</div>
+          </div>
+
+          <h4>Master/slave model with load balancing</h4>
+
+          <p>To be even more efficient, we don't want any of our slave processes to finish early (which they often do because feasible solutions are not evenly distributed through the space of integers being divided up). In our next iteration, we implemented a scheme where the master would attempt to redistribute work from the slowest process to any process that had finished all of its initial work assignment.</p>
+
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <img src="img/mpi-splitting-work.png" width="600" />
+            </div>
+            <div class="panel-footer">Master/slave with load balancing to keep all processes employed.</div>
+          </div>
+
+          Load balancing was even faster (and slightly more efficient) than the previous implementation.
+
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <img src="img/result-split.png" width="600" />
+            </div>
+            <div class="panel-footer">Results from solving ILP with load balancing master/slave.</div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <table class="table table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>processors</th>
+                    <th>load balancing</th>
+                    <th>time (s)</th>
+                    <th>speedup</th>
+                    <th>efficiency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="warning">
+                    <td>   1</td>
+                    <td> ---</td>
+                    <td> 13500.3095</td>
+                    <td> ---</td>
+                    <td> ---</td>
+                  </tr>
+                  <tr>
+                    <td>   4</td>
+                    <td>  No</td>
+                    <td> 4922.5975</td>
+                    <td>   2.74</td>
+                    <td> 0.69</td>
+                  </tr>
+                  <tr>
+                    <td>   8</td>
+                    <td>  No</td>
+                    <td> 2212.6460</td>
+                    <td>   6.10</td>
+                    <td> 0.76</td>
+                  </tr>
+                  <tr>
+                    <td>  16</td>
+                    <td>  No</td>
+                    <td> 1148.0969</td>
+                    <td>  11.76</td>
+                    <td> 0.73</td>
+                  </tr>
+                  <tr>
+                    <td>  32</td>
+                    <td>  No</td>
+                    <td>  581.3491</td>
+                    <td>  23.22</td>
+                    <td> 0.73</td>
+                  </tr>
+                  <tr>
+                    <td>  64</td>
+                    <td>  No</td>
+                    <td>  325.5046</td>
+                    <td>  41.48</td>
+                    <td> 0.69</td>
+                  </tr>
+                  <tr>
+                    <td> 128</td>
+                    <td>  No</td>
+                    <td>  186.2928</td>
+                    <td>  72.49</td>
+                    <td> 0.57</td>
+                  </tr>
+                  <tr>
+                    <td> 256</td>
+                    <td>  No</td>
+                    <td>  161.1719</td>
+                    <td>  83.76</td>
+                    <td> 0.33</td>
+                  </tr>
+                  <tr>
+                    <td>   4</td>
+                    <td> Yes</td>
+                    <td> 4538.3395</td>
+                    <td>   2.97</td>
+                    <td> 0.74</td>
+                  </tr>
+                  <tr>
+                    <td>   8</td>
+                    <td> Yes</td>
+                    <td> 1965.5124</td>
+                    <td>   6.87</td>
+                    <td> 0.86</td>
+                  </tr>
+                  <tr>
+                    <td>  16</td>
+                    <td> Yes</td>
+                    <td>  961.8448</td>
+                    <td>  14.04</td>
+                    <td> 0.88</td>
+                  </tr>
+                  <tr>
+                    <td>  32</td>
+                    <td> Yes</td>
+                    <td>  481.9911</td>
+                    <td>  28.01</td>
+                    <td> 0.88</td>
+                  </tr>
+                  <tr>
+                    <td>  64</td>
+                    <td> Yes</td>
+                    <td>  300.3186</td>
+                    <td>  44.95</td>
+                    <td> 0.70</td>
+                  </tr>
+                  <tr>
+                    <td> 128</td>
+                    <td> Yes</td>
+                    <td>  179.7172</td>
+                    <td>  75.12</td>
+                    <td> 0.59</td>
+                  </tr>
+                  <tr>
+                    <td> 256</td>
+                    <td> Yes</td>
+                    <td>  130.6939</td>
+                    <td> 103.30</td>
+                    <td> 0.40</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="panel-footer">Table of results for master/slave.</div>
+          </div>
+
+        <h4>Using MapReduce to generate even more solutions</h4>
+
+        <p>The ultimate goal was to get high fitness scores from the non-linear heuristic. To be even more exhaustive, we took all feasible solutions from the parallelized ILP. These solutions were fed into a MapReduce program which perturbed each arrangement by switching every possible pair of students and then checking the non-linear fitness of the perturbed solution. We wrote this MapReduce job in Python using the <code><a href="http://pythonhosted.org/mrjob/">mrjob</a></code> package, and ran it on 10 <code>m1.large</code> Amazon AWS EC2 instances.</p>
+
+        <p>While these perturbed solutions were not guaranteed to obey the hard constraints &mdash; many did not &mdash; that did not necessarily mean they would all have worse fitness scores (although it was likely since the heuristic heavily penalizes violated constraints). We wanted to get an idea of how sparse higher fitness scores would be for solutions that were "near" those generated by the ILP.</p>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <img src="img/mapreduce.png" width="600" />
+          </div>
+          <div class="panel-footer">The MapReduce solution perturbation scheme.</div>
+        </div>
+
+        <p>As expected, it turned out that very few of the generated perturbations had fitness scores that were higher, and of those that did the difference was small. Of over 6,000,000 perturbed solutions evaluated:
+
+        <ol>
+          <li>Only 7,718 did not have worse fitness scores than the original solution.</li>
+          <li>Of those 7,718, only 772 scored higher than the original.</li>
+          <li>Of those 772 that scored higher, the largest observed difference between the original fitness score and the perturbed solution score was only 500 points &mdash; not a significant difference for scores that are routinely in the neighborhood of 17,000. In fact, most differences were fewer than 200 points.</li>
         </ol>
 
-        <h4>Basic implementation</h4>
-
-        <p>The simplest implementation using MPI is to start each process off with a roughly equal portion of the integers in between the absolute min and max of the artificial objective function, and simply work through that process without communicating further.</p>
-
-        <p>The obvious problem with this method &mdash; we'll call it the "naive" implementation &mdash; is that some processors may finish long before the others and waste time doing nothing. Nonetheless, there is large initial win simply by dividing up the work among many processors. We seek to improve on this initial improvement by being smarter about keeping all processes employed.</p>
+        </p>
 
         <div class="panel panel-default">
           <div class="panel-body">
-            <img src="img/result-naive.png" width="600" />
+            <img src="img/result-mapreduce.png" width="600" />
           </div>
-          <div class="panel-footer">Results from the naive implementation.</div>
+          <div class="panel-footer">Histogram of fitness differences for the few perturbed solutions that were not worse.</div>
         </div>
 
-        <h4>Distributed load balancing</h4>
+        <h4>Conclusion</h4>
 
-        <p>One way to split up work in MPI is to start each process off with a roughly equal amount of work (as in the naive implementation), but <strong>let them communicate directly with one another if they run out of work</strong>.</p>
+        <p>We achieved a gratifying speed increase &mdash; over 100x &mdash; by parallelizing this problem, going from the order of almost 4 hours to about 2 minutes using 256 processors. Even the most naive implementation represented a massive improvement simply by moving from serial to parallel. From there, we found the master/slave paradigm the best way to squeeze out more performance without overly complicating the implementation.</p>
 
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <img src="img/distributed-load-balancing.png" width="600" />
-          </div>
-          <div class="panel-footer">Distributed load balancing.</div>
+
         </div>
-
-        <p>With fewer processors, this was a relatively fast and efficient method. However, as the number of processes increases the overhead increases quickly. Part of the reason is that in order to avoid non-blocking communication, a process that runs out of work randomly picks a different process to ask for more. When there are many processes with relatively small search spaces, they all tend to run out fairly quickly and then spend too much time trying to contact one another before wrapping up.</p>
-
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <!-- <img src="img/result-distributed.png" width="600" /> -->
-          </div>
-          <div class="panel-footer">Results from the distributed load balancing implementation.</div>
-        </div>
-
-        <h4>Master/slave model</h4>
-
-        <p>In the first iteration of master/slave, <strong>each process gets an even chunk</strong> of the integers in between the absolute min and max of the artificial objective function. In this scheme, we do not yet do any load balancing. Although it seems probable that load balancing will have a net positive impact, we first would like to observe performance without doing so &mdash; this way we can quantify the benefits of load balancing, and see if the added overhead is worthwhile.</p>
-
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <img src="img/mpi-master-slave.png" width="600" />
-          </div>
-          <div class="panel-footer">Master/slave using even work assignments for all processes.</div>
-        </div>
-
-        <p>Like distributed load balancing, this method resulted in excellent speedups over the serial version &mdash; the following graph shows both speedup and efficiency with different numbers of processors.</p>
-
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <img src="img/result-no-split.png" width="600" />
-          </div>
-          <div class="panel-footer">Results from solving ILP with MPI master/slave.</div>
-        </div>
-
-        <h4>Master/slave model with load balancing</h4>
-
-        <p>To be even more efficient, we don't want any of our slave processes to finish early (which they often do because feasible solutions are not evenly distributed through the space of integers being divided up). In our next iteration, we implemented a scheme where the master would attempt to <strong>redistribute work from the slowest process to any process that had finished</strong> all of its initial work assignment.</p>
-
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <img src="img/mpi-splitting-work.png" width="600" />
-          </div>
-          <div class="panel-footer">Master/slave with load balancing to keep all processes employed.</div>
-        </div>
-
-        Load balancing was even faster (and slightly more efficient) than the previous implementation.
-
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <img src="img/result-split.png" width="600" />
-          </div>
-          <div class="panel-footer">Results from solving ILP with MPI master/slave and load balancing.</div>
-        </div>
-
-        <div class="panel panel-default">
-          <div class="panel-body">
-          <table class="table table-striped table-condensed">
-            <thead>
-              <tr>
-                <th>processors</th>
-                <th>load balancing</th>
-                <th>time (s)</th>
-                <th>speedup</th>
-                <th>efficiency</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="warning">
-                <td>   1</td>
-                <td> ---</td>
-                <td> 13500.3095</td>
-                <td> ---</td>
-                <td> ---</td>
-              </tr>
-              <tr>
-                <td>   4</td>
-                <td>  No</td>
-                <td> 4922.5975</td>
-                <td>   2.74</td>
-                <td> 0.69</td>
-              </tr>
-              <tr>
-                <td>   8</td>
-                <td>  No</td>
-                <td> 2212.6460</td>
-                <td>   6.10</td>
-                <td> 0.76</td>
-              </tr>
-              <tr>
-                <td>  16</td>
-                <td>  No</td>
-                <td> 1148.0969</td>
-                <td>  11.76</td>
-                <td> 0.73</td>
-              </tr>
-              <tr>
-                <td>  32</td>
-                <td>  No</td>
-                <td>  581.3491</td>
-                <td>  23.22</td>
-                <td> 0.73</td>
-              </tr>
-              <tr>
-                <td>  64</td>
-                <td>  No</td>
-                <td>  325.5046</td>
-                <td>  41.48</td>
-                <td> 0.69</td>
-              </tr>
-              <tr>
-                <td> 128</td>
-                <td>  No</td>
-                <td>  186.2928</td>
-                <td>  72.49</td>
-                <td> 0.57</td>
-              </tr>
-              <tr>
-                <td> 256</td>
-                <td>  No</td>
-                <td>  161.1719</td>
-                <td>  83.76</td>
-                <td> 0.33</td>
-              </tr>
-              <tr>
-                <td>   4</td>
-                <td> Yes</td>
-                <td> 4538.3395</td>
-                <td>   2.97</td>
-                <td> 0.74</td>
-              </tr>
-              <tr>
-                <td>   8</td>
-                <td> Yes</td>
-                <td> 1965.5124</td>
-                <td>   6.87</td>
-                <td> 0.86</td>
-              </tr>
-              <tr>
-                <td>  16</td>
-                <td> Yes</td>
-                <td>  961.8448</td>
-                <td>  14.04</td>
-                <td> 0.88</td>
-              </tr>
-              <tr>
-                <td>  32</td>
-                <td> Yes</td>
-                <td>  481.9911</td>
-                <td>  28.01</td>
-                <td> 0.88</td>
-              </tr>
-              <tr>
-                <td>  64</td>
-                <td> Yes</td>
-                <td>  300.3186</td>
-                <td>  44.95</td>
-                <td> 0.70</td>
-              </tr>
-              <tr>
-                <td> 128</td>
-                <td> Yes</td>
-                <td>  179.7172</td>
-                <td>  75.12</td>
-                <td> 0.59</td>
-              </tr>
-              <tr>
-                <td> 256</td>
-                <td> Yes</td>
-                <td>  130.6939</td>
-                <td> 103.30</td>
-                <td> 0.40</td>
-              </tr>
-            </tbody>
-          </table>
-          </div>
-        <div class="panel-footer">Table of results for master/slave.</div>
-        </div>
-
-      <h4>Using MapReduce to generate even more solutions</h4>
-
-      <p>The ultimate goal was to get high fitness scores from the non-linear heuristic. To be even more exhaustive, we took all feasible solutions from the parallelized ILP. These solutions were fed into a MapReduce program which perturbed each solution by switching every possible pair of students, and checked the non-linear fitness of the perturbed solution. We set up this MapReduce job in Python using the <code><a href="http://pythonhosted.org/mrjob/">mrjob</a></code> package, and ran it on 10 <code>m1.large</code> Amazon AWS EC2 instances.</p>
-
-      <p>While these perturbed solutions were not guaranteed to obey the hard constraints &mdash; many did not &mdash; that did not necessarily mean they would all have worse fitness scores (although it was likely since the heuristic heavily penalizes violated constraints). We wanted to get an idea of how sparse higher fitness scores would be for solutions that were "near" those generated by the ILP but not considered feasible.</p>
-
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <img src="img/mapreduce.png" width="600" />
-        </div>
-        <div class="panel-footer">The MapReduce solution perturbation scheme.</div>
-      </div>
-
-      <p>As expected, it turned out that very few of the generated perturbations had fitness scores that were higher, and of those that did the difference was small. Of over 6,000,000 perturbed solutions evaluated:
-
-      <ol>
-        <li> Only 7,718 did not have worse fitness scores than the original solution.</li>
-        <li>Of those 7,718, only 772 scored <emph>higher</emph> than the original.</li>
-        <li>And of those the scored higher, the largest observed difference between the original fitness score and the perturbed solution score was only 500 points &mdash; not a significant difference for scores that are routinely in the neighborhood of 17,000</li>
-      </ol>
-
-      </p>
-
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <img src="img/result-mapreduce.png" width="600" />
-        </div>
-        <div class="panel-footer">Histogram of fitness differences for the few perturbed solutions that were not worse.</div>
-      </div>
-
-      </div>
       </div>
 
       <div class="footer">
