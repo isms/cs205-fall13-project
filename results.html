@@ -293,7 +293,7 @@
 
       <h4>Using MapReduce to generate even more solutions</h4>
 
-      <p>The ultimate goal was to get high fitness scores from the non-linear heuristic. To be even more exhaustive, we took all feasible solutions from the parallelized ILP. These solutions were fed into a MapReduce program which perturbed each solution by switching every possible pair of students, and checked the non-linear fitness of the perturbed solution. We set up this MapReduce job in Python using the <code>mrjob</code> package, and ran it on 10 <code>m1.large</code> Amazon AWS EC2 instances.</p>
+      <p>The ultimate goal was to get high fitness scores from the non-linear heuristic. To be even more exhaustive, we took all feasible solutions from the parallelized ILP. These solutions were fed into a MapReduce program which perturbed each solution by switching every possible pair of students, and checked the non-linear fitness of the perturbed solution. We set up this MapReduce job in Python using the <code><a href="http://pythonhosted.org/mrjob/">mrjob</a></code> package, and ran it on 10 <code>m1.large</code> Amazon AWS EC2 instances.</p>
 
       <div class="panel panel-default">
         <div class="panel-body">
