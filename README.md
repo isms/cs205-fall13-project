@@ -17,7 +17,7 @@ The requirements for this repo are in `requirements.txt`. In a virtualenv, you s
 
     pip install -r requirements.txt
 
-Prior to installing [MPI](http://en.wikipedia.org/wiki/Message_Passing_Interface), you need to have the libraries for an implementation of MPI on your system. We used [Open MPI](http://www.open-mpi.org/).
+Prior to installing `mpi4py`, you need to have the libraries for an implementation of [MPI](http://en.wikipedia.org/wiki/Message_Passing_Interface) on your system. We used [Open MPI](http://www.open-mpi.org/).
 
 
 Implementations
@@ -54,7 +54,7 @@ The output from running any of the implementations listed above will be a semico
 
     output_2013.12.02-12.14_p256_t161.1719.csv
 
-Contained in this filename is the date, the number of processors (256), and the total running time (161.1719 seconds). The columns of this file are as follows: 
+Contained in this filename is the date, the number of processors (256), and the total running time (161.1719 seconds). The columns of this file are as follows:
 
    * `min_value_constraint`: the minimum value that was passed in to the model to be used as a constraint for the objective function.
    * `setup_time`: the amount of time spent in setting up the `pulp` LP model object.

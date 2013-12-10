@@ -104,7 +104,7 @@ def evaluate_placement(placements):
                 elif elem[i + 1] == 2:
                     high_teacher_rec_score += 400
                 else:
-                    RuntimeError('Problem with teacher recommendation input file.')
+                    raise RuntimeError('Problem with teacher recommendation input file.')
 
     #assess troublemaker penalty
     troublemaker_count = np.zeros(NUM_CLASSES)
