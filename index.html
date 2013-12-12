@@ -55,7 +55,7 @@
             <li>Non-linear heuristics to further improve on the outputs of the ILP model by evaluating a fitness score for each feasible solution. This fitness score takes into account multiple simultaneous objectives that would be too restrictive if implemented as hard constraints in the ILP.</li>
           </ol>
 
-          The overarching limitation of the model is that <strong>creating feasible solutions is a lengthy process</strong>. We wish to improve on this by parallelization.</p>
+          In practice, the above approach found acceptable solutions, but was not designed to provide multiple solutions that varied significantly from each other. Typically, the school wants to see multiple good solutions that are as different from each other as possible. For example, they might see a placement that scores well in the model, but that won't work well in practice. To do that, we decided to create an implementation that uses integer linear programming to generate many multiple solutions, which are then scored based on non-linear criteria. But to find good solutions this way, it is necessary to generate many feasible solution using the ILP and then pick the best ones at the end. A limitation of doing this, however, is that <strong>creating many feasible solutions is a lengthy process</strong>. We wish to improve on this by using parallelization.</p>
         </div>
 
         <div class="col-md-6">
