@@ -60,7 +60,7 @@
                  $$\operatorname{min} Z = \sum_{j=1}^{n} \sum_{i=1}^{m} x_{ij} \cdot i \cdot j$$
               <p>
 
-          <p>This objective function can be used to get the solver to generate a different feaible solution. Specifically, we can take the objective function minimum found in the last iteration &mdash; call it $z_{t-1}$ &mdash; and add a new constraint for the current iteration that the objective function $Z > z_{t-1}$.</p>
+          <p>This objective function can be used to get the solver to generate a different feasible solutions. Specifically, we can take the objective function minimum found in the last iteration &mdash; call it $z_{t-1}$ &mdash; and add a new constraint for the current iteration that the objective function $Z > z_{t-1}$. For our data set, our solver found a minimum value for the objective function of 9,227 and a maximum value of 11,534. Thus, the upper bound on the number of solutions we could generate is 1,608. However, the solver is not always able to find a solution at each integer within this range. This is especially true near the endpoints of the domain (we were able to find a total of 1409 solutions for our dataset). Thus, we face two issues when trying to parallelize this process: first that the ILP solver takes different amounts of time for each solution (ranging from about 1 second to 1 minute), thus creating imbalanced workloads, and secondly that we don't know ahead of time how many times the solver will be called within a given range.</p>
 
           <p><small><strong>Note:</strong> some solvers are able to generate additional feasible solutions from the same LP model, but many are not. Though we opted to use <code>GLPK</code> for benchmarking purposes, we wanted to avoid making assumptions about the solver. For that reason, we chose this method of an artificial objective function with iterative constraints in order to generate multiple feasible solutions.</small></p>
 
@@ -109,7 +109,9 @@
 
           <h4>Distributed load balancing</h4>
 
-          <p>One way to split up work in MPI is to start each process off with a roughly equal amount of work (as in the naive implementation), but let them communicate directly with one another if they run out of work.</p>
+          <p>One way to split up work in MPI is to start each process off with a roughly equal portion of the domain (as in the naive implementation), but let them communicate directly with one another if they run out of work. In order to do this, each process runs with a "work" thread that solves the ILPs and a communication thread that sends out requests for work when the work thread finishes and also "listens" for requests from other processors. When a processor receives a request for work, if it has more than a minimum threshold of work left within its given range, it hands off half of the work to the requesting processor. If it does not have work, then it sends a rejection and the processor requesting work will then move on to request work from the next processor. If the processor receives enough rejections, then it simply gives up and terminates (although it's communication thread will stay alive until the all processors are done in order to send out rejections when it receives work).</p>
+
+          <p>The major problem with this method is that having each processor running multiple threads slows down the speed at which they do work. To alleviate this issue, we have the communication thread pause for two seconds between each iteration of its loop. This works well for a low number of processors, but does not scale well since the communication overhead increases with the number of processors, so the communication thread does a significant amount of work despite the pauses (we experimented with various pause lengths, but increasing the pause length too much slows down the average response time when processors request work. We found 2 seconds to be a good balance). Additionally, even without any pause, as the number of processors increases, so too does the response time since each processor must check for message from all other processors.</p>
 
           <div class="panel panel-default">
             <div class="panel-body">
@@ -118,16 +120,152 @@
             <div class="panel-footer">Distributed load balancing.</div>
           </div>
 
-          <p>With fewer processors, this was a relatively fast and efficient method. However, the overhead increases quickly as the number of processes is increased. Part of the reason is that a process that runs out of work randomly picks a different process to ask for more. When there are many processes with relatively small search spaces, they all tend to run out fairly quickly and then spend too much time trying to contact one another before wrapping up.</p>
-
-          <!--
           <div class="panel panel-default">
             <div class="panel-body">
               <img src="img/result-distributed.png" width="600" />
             </div>
             <div class="panel-footer">Results from the distributed load balancing implementation.</div>
           </div>
-          -->
+
+          <p>As the results above show, with fewer processors, this was a relatively fast and efficient method. However, the overhead increases quickly as the number of processes is increased. Another reason that it doesn't scale well for this problem is that we have a limited domain. When using 256 processors, each processor gets a "chunk" of about 6 integers from the range between 9,927 and 11,534. With such a small amount of work to be completed and a large amount of communication overhead slowing down each processor, it is more efficient to simply divide the work up and then collect it all at the end.</p>
+
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <table class="table table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>processors</th>
+                    <th>load balancing</th>
+                    <th>time (s)</th>
+                    <th>speedup</th>
+                    <th>efficiency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="warning">
+                    <td>   1</td>
+                    <td> ---</td>
+                    <td> 13500.3095</td>
+                    <td> ---</td>
+                    <td> ---</td>
+                  </tr>
+                  <tr>
+                    <td>   2</td>
+                    <td>  No</td>
+                    <td> 7150.7547</td>
+                    <td>  1.89</td>
+                    <td> 0.94</td>
+                  </tr>
+                  <tr>
+                    <td>   4</td>
+                    <td>  No</td>
+                    <td> 3910.5397</td>
+                    <td>   3.45</td>
+                    <td> 0.86</td>
+                  </tr>
+                  <tr>
+                    <td>   8</td>
+                    <td>  No</td>
+                    <td> 2411.4662</td>
+                    <td>   5.60</td>
+                    <td> 0.70</td>
+                  </tr>
+                  <tr>
+                    <td>  16</td>
+                    <td>  No</td>
+                    <td> 1096.7792</td>
+                    <td>  12.31</td>
+                    <td> 0.77</td>
+                  </tr>
+                  <tr>
+                    <td>  32</td>
+                    <td>  No</td>
+                    <td>  650.0861</td>
+                    <td>  20.76</td>
+                    <td> 0.65</td>
+                  </tr>
+                  <tr>
+                    <td>  64</td>
+                    <td>  No</td>
+                    <td>  381.0861</td>
+                    <td>  35.43</td>
+                    <td> 0.55</td>
+                  </tr>
+                  <tr>
+                    <td> 128</td>
+                    <td>  No</td>
+                    <td>  221.8088</td>
+                    <td>  60.86</td>
+                    <td> 0.48</td>
+                  </tr>
+                  <tr>
+                    <td> 256</td>
+                    <td>  No</td>
+                    <td>  143.8961</td>
+                    <td>  93.82</td>
+                    <td> 0.37</td>
+                  </tr>
+                  <tr>
+                    <td>   2</td>
+                    <td> Yes</td>
+                    <td> 6799.1015</td>
+                    <td> 1.99</td>
+                    <td> 0.99</td>
+                  </tr>
+                  <tr>
+                    <td>   4</td>
+                    <td> Yes</td>
+                    <td> 3641.5851</td>
+                    <td> 3.71</td>
+                    <td> 0.93</td>
+                  </tr>
+                  <tr>
+                    <td>   8</td>
+                    <td> Yes</td>
+                    <td> 1787.092</td>
+                    <td>  7.55 </td>
+                    <td> 0.94</td>
+                  </tr>
+                  <tr>
+                    <td>  16</td>
+                    <td> Yes</td>
+                    <td>  1063.6516</td>
+                    <td> 12.69</td>
+                    <td> 0.79</td>
+                  </tr>
+                  <tr>
+                    <td>  32</td>
+                    <td> Yes</td>
+                    <td> 555.0021</td>
+                    <td> 24.32 </td>
+                    <td> 0.76</td>
+                  </tr>
+                  <tr>
+                    <td> 64</td>
+                    <td> Yes</td>
+                    <td> 401.2980</td>
+                    <td> 33.6416</td>
+                    <td> 0.49</td>
+                  </tr>
+                  <tr>
+                    <td> 128</td>
+                    <td> Yes</td>
+                    <td> 217.4343</td>
+                    <td> 62.09</td>
+                    <td> 0.49</td>
+                  </tr>
+                  <tr>
+                    <td> 256</td>
+                    <td> Yes</td>
+                    <td> 542.4713</td>
+                    <td> 24.89</td>
+                    <td> 0.10</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="panel-footer">Table of results for basic implementation and distributed load balancing.</div>
+          </div>
 
           <h4>Master/slave model</h4>
 
@@ -326,6 +464,13 @@
         <h4>Conclusion</h4>
 
         <p>We achieved a gratifying speed increase &mdash; over 100x &mdash; by parallelizing this problem, going from the order of almost 4 hours to about 2 minutes using 256 processors. Even the most naive implementation represented a massive improvement simply by moving from serial to parallel. From there, we found the master/slave paradigm the best way to squeeze out more performance without overly complicating the implementation.</p>
+
+        <div class="panel panel-default">
+        <div class="panel-body">
+            <img src="img/result-all4.png" width="600" />
+        </div>
+        <div class="panel-footer">Comparison of results from different methods.</div>
+        </div>
 
 
         </div>
