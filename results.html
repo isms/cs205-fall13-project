@@ -127,7 +127,7 @@
             <div class="panel-footer">Results from the distributed load balancing implementation.</div>
           </div>
 
-          <p>As the results above show, with fewer processors, this was a relatively fast and efficient method. However, the communication overhead increases quickly as the number of processes is increased. Another reason that it doesn't scale well for this problem is that we have a limited domain. When using 256 processors, each processor gets a "chunk" of about 6 integers from the range between 9,927 and 11,534. With such a small amount of work to be completed and a large amount of communication overhead slowing down each processor, it is more efficient to simply divide the work up and then collect it all at the end.</p>
+          <p>As the results above show, with fewer processors, this was a relatively fast and efficient method. However, the communication overhead increases quickly as the number of processes is increased, which actually causes the process to slow down when too many processors are used. Another reason that it doesn't scale well for this problem is that we have a limited domain. When using 256 processors, each processor gets a "chunk" of about 6 integers from the range between 9,927 and 11,534. With such a small amount of work to be completed and a large amount of communication overhead slowing down each processor, it is more efficient to simply divide the work up "naively" and process it without any communication. Because of these scaling issues, we decided to implement the master/slave implementations discussed below.</p>
 
           <div class="panel panel-default">
             <div class="panel-body">
