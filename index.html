@@ -60,7 +60,7 @@
         </div>
 
         <div class="col-md-6">
-          <p>The previous method was not well suited to finding multiple solutions, so we decided to create an implementation that skips the second step and instead uses integer linear programming to generate many feasible solutions, which are then scored based on non-linear criteria. But to find solutions that score well this way, it is necessary to generate many feasible solution using the ILP and then pick the best ones at the end. A limitation of doing this, however, is that <strong>creating many feasible solutions is a lengthy process</strong>. We wish to improve on this by using parallelization.</p>
+          <p>The previous method was not well suited to finding multiple solutions, so we decided to create an implementation that skips the second step and instead uses integer linear programming to generate many feasible solutions, which are then scored based on non-linear criteria. But to find solutions that score well this way, it is necessary to generate many feasible solutions using the ILP and then pick the best ones at the end. A limitation of doing this, however, is that <strong>creating many feasible solutions is a lengthy process</strong>. We wish to improve on this by using parallelization.</p>
           <h4>Problem statement</h4>
 
           <p>Can we parallelize this model and achieve meaningful speed improvements by splitting up the work?</p>
