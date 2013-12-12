@@ -54,7 +54,7 @@ if __name__ == '__main__':
     size = comm.Get_size()
 
     work = np.arange(options.min, options.max+1)
-    local_work = np.split(work, size)[rank]
+    local_work = np.array_split(work, size)[rank]
 
     if rank == 0:
         start_time = MPI.Wtime()
