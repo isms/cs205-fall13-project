@@ -1,8 +1,3 @@
-"""
-NOTE: This implementation is deprecated and strictly dominated in performance
-      by `parallel_naive.py` and `parallel_master_slave.py`.
-"""
-
 from __future__ import division
 from Queue import Queue
 import random
@@ -62,7 +57,7 @@ def check_for_work_requests(comm, processor_list, q_end, min_value, end, work_le
     processor that it has no work to give.
     """
 
-    # the value of temp variable won't be used... just created to 
+    # the value of temp variable won't be used... just created to
     # have something for Irecv to receive
     irecv_buffer = np.empty_like(LOOKING_FOR_WORK)
     req = comm.Irecv(irecv_buffer, source=MPI.ANY_SOURCE, tag=LOOKING_FOR_WORK_TAG)
@@ -204,7 +199,7 @@ def process_interval(comm, start, end, q_end, q_work_left, q_looking_for_work,
             results.append(row)
 
         # put the min_value in this queue to let the other thread know
-        # that the interval was updated 
+        # that the interval was updated
         q_work_left.put(min_value)
 
         # check q_end to see if the other thread updated the interval's
@@ -212,7 +207,7 @@ def process_interval(comm, start, end, q_end, q_work_left, q_looking_for_work,
         if q_end.qsize() > 0:
             end = q_end.get()
 
-    # let the other thread know that this thread is done and is looking 
+    # let the other thread know that this thread is done and is looking
     # for more work
     q_looking_for_work.put(1)
     response = q_start_end.get()
@@ -230,7 +225,7 @@ if __name__ == '__main__':
     rank = comm.Get_rank()
     size = comm.Get_size()
 
-    # create various queues that will be used to communicate between 
+    # create various queues that will be used to communicate between
     # threads
     q_end = Queue() # used to tell the worker thread that it should use a new end point
     q_looking_for_work = Queue() # used to tell communication that work is needed
