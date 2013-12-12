@@ -127,7 +127,7 @@
             <div class="panel-footer">Results from the distributed load balancing implementation.</div>
           </div>
 
-          <p>As the results above show, with fewer processors, this was a relatively fast and efficient method. However, the overhead increases quickly as the number of processes is increased. Another reason that it doesn't scale well for this problem is that we have a limited domain. When using 256 processors, each processor gets a "chunk" of about 6 integers from the range between 9,927 and 11,534. With such a small amount of work to be completed and a large amount of communication overhead slowing down each processor, it is more efficient to simply divide the work up and then collect it all at the end.</p>
+          <p>As the results above show, with fewer processors, this was a relatively fast and efficient method. However, the communication overhead increases quickly as the number of processes is increased. Another reason that it doesn't scale well for this problem is that we have a limited domain. When using 256 processors, each processor gets a "chunk" of about 6 integers from the range between 9,927 and 11,534. With such a small amount of work to be completed and a large amount of communication overhead slowing down each processor, it is more efficient to simply divide the work up and then collect it all at the end.</p>
 
           <div class="panel panel-default">
             <div class="panel-body">
@@ -463,7 +463,7 @@
 
         <h4>Conclusion</h4>
 
-        <p>We achieved a gratifying speed increase &mdash; over 100x &mdash; by parallelizing this problem, going from the order of almost 4 hours to about 2 minutes using 256 processors. Even the most naive implementation represented a massive improvement simply by moving from serial to parallel. From there, we found the master/slave paradigm the best way to squeeze out more performance without overly complicating the implementation.</p>
+        <p>We achieved a gratifying speed increase &mdash; over 100x &mdash; by parallelizing this problem, going from the order of almost 4 hours to about 2 minutes using 256 processors. Even the most naive implementation represented a massive improvement simply by moving from serial to parallel.</p>
 
         <div class="panel panel-default">
         <div class="panel-body">
@@ -471,8 +471,7 @@
         </div>
         <div class="panel-footer">Comparison of results from different methods.</div>
         </div>
-
-
+        <p>With large numbers of processors at your disposal, the master/slave model with load rebalancing is the most efficient of our methods. Were the domain larger, you could even potentially implement a model with two or more masters and many slaves that might run more efficiently with very large numbers of processors, but for a domain of our problems size, it did not make sense to implement this method. In practice, if this model is used for actual class placements, it will probably be run on a laptop or desktop computer with 2-8 cores. In that, the most sensical implementation to use would be the distributed load balancing one, since that is more efficient with small numbers of processes, even if it does not scale up well.</p>
         </div>
       </div>
 
