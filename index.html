@@ -67,7 +67,7 @@
 
           <p>Can we parallelize this model and achieve meaningful speed improvements by splitting up the work?</p>
           <h4>Data</h4>
-          <p>All of our data comes from actual data inputed by adminstrators or teachers at the school. We removed any students' names to protect their identity.</p>
+          <p>All of our data comes from actual data inputed by adminstrators or teachers at the school. We removed any students' names to protect their identity. For our software's use, we put the data into various tab delimited text files which can be read in easily. We also included an <a href = https://github.com/isms/cs205-fall13-project/blob/master/data/excel_data.xlsx> excel file </a> in our GitHub repo, which has all of our data in one file and is much easier to read.</p>
           <h4>Results</h4>
 
           <p>We achieved excellent speedups (over 100x) by parallelizing this problem using <a href="http://en.wikipedia.org/wiki/Message_Passing_Interface">MPI</a>. We were able to move from a run time of almost <strong>4 hours</strong> down to about <strong>2 minutes</strong> using a cluster of 256 processors. MPI proved a powerful and flexible way to parallelize LP solving. You can read more about the project results <a href="results.html">here</a>.</p>
