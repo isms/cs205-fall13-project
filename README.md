@@ -45,7 +45,7 @@ Implementations
 Input
 -----
 
-The (anonymized) inputs from the school are text files in `data/`. The data in these files is parsed in and accessible through `settings.py`, which also contains other global settings for setting up the ILP.
+The (anonymized) inputs from the school are text files in `data/`. The data in these files is parsed in and accessible through `settings.py`, which also contains other global settings for setting up the ILP. There is also an Excel file called excel_data.xlsx available in the data folder which has all the data in one place for easy viewing.
 
 Output
 ------
