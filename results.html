@@ -476,7 +476,7 @@
 
         <h4>Insights, possible improvements and other musings about the project</h4>
 
-        <p>In workin on this project, we learned quite a bit about MPI. There were an unknown number of solutions within the search domain, so figuring out how to split it up required quite a bit of trial and error. For example, we found that if we didn't set a minimum threshold for how much work processors could hand off to each other, it often led to repeated work being done since feasible solutions were not distributed evenly along the domain.</p>
+        <p>In working on this project, we learned quite a bit about MPI. There were an unknown number of solutions within the search domain, so figuring out how to split it up required quite a bit of trial and error. For example, we found that if we didn't set a minimum threshold for how much work processors could hand off to each other, it often led to repeated work being done since feasible solutions were not distributed evenly along the domain.</p>
 
         <p>In the distributed load balancing implentation, we had to come up with an implementation that allows processors to communicate with each other while also doing their own work. To accomplish this, after much frustration, we eventually found that we could use threading. However, threading added a whole new dimension to the complexity of the program, since we had to keep track of not only different processors, but also different threads on each of those processors. Implementing this was challenging, but rewarding as well.</p>
 
